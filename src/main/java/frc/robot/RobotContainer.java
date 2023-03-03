@@ -1,5 +1,6 @@
 package frc.robot;
 
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -12,8 +13,10 @@ public class RobotContainer {
     private final Joystick m_joystick2 = new Joystick(1);
     private final Drivetrain m_swerve = new Drivetrain(new Pose2d());
 
-    //Add in SlewRateLimiters
-
+    private SlewRateLimiter filterForLeftRightUpDown = new SlewRateLimiter(0.5); 
+    private SlewRateLimiter filterForRotation = new SlewRateLimiter(0.5);
+    //mess with parameter a bit to get desired output-flow??
+    
     private Command driveCommand = null;
 
     public RobotContainer() {}
@@ -23,9 +26,9 @@ public class RobotContainer {
 
         RunCommand dc = new RunCommand(
             () -> m_swerve.drive(
-                m_joystick1.getRawAxis(0), 
-                m_joystick1.getRawAxis(1), 
-                m_joystick1.getRawAxis(2)*100, 
+                filterForLeftRightUpDown.calculate(m_joystick1.getRawAxis(0)), 
+                filterForLeftRightUpDown.calculate(m_joystick1.getRawAxis(1)), 
+                filterForRotation.calculate(m_joystick1.getRawAxis(2)*100),
                 true
             ),
             m_swerve
