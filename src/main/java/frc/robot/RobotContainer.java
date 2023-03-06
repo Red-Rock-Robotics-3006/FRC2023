@@ -10,7 +10,7 @@ import frc.robot.Subsystems.Drivetrain;
 public class RobotContainer {
     private final Joystick m_joystick1 = new Joystick(0);
     private final Joystick m_joystick2 = new Joystick(1);
-    private final Drivetrain m_swerve = new Drivetrain(new Pose2d());
+    private final Drivetrain m_swerve = Drivetrain.getInstance();
 
     //Add in SlewRateLimiters
 
