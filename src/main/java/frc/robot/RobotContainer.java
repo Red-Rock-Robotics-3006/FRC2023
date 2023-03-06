@@ -18,11 +18,16 @@ import frc.robot.Commands.*;
 @SuppressWarnings("unused")
 public class RobotContainer {
     private final Joystick m_joystick1 = new Joystick(0);
+<<<<<<< HEAD
     private final CommandXboxController mechStick = new CommandXboxController(1);
 
     private final Drivetrain m_swerve = new Drivetrain(new Pose2d());
     private final Elevator m_elevator = new Elevator();
     private final HorizontalExtender m_extender = new HorizontalExtender();
+=======
+    private final Joystick m_joystick2 = new Joystick(1);
+    private final Drivetrain m_swerve = Drivetrain.getInstance();
+>>>>>>> 4a99616 (Drivetrain converted to singleton)
 
     private SlewRateLimiter filterForAxis1 = new SlewRateLimiter(100); //Lower values to limit
     private SlewRateLimiter filterForAxis2 = new SlewRateLimiter(100); //Lower values to limit

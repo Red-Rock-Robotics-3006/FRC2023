@@ -21,6 +21,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 /** Represents a swerve drive style drivetrain. */
 @SuppressWarnings("unused")
 public class Drivetrain extends SubsystemBase {
+  private static Drivetrain instance;
+
   public static final double kMaxSpeed = 5.0;
   public static final double kMaxAngularSpeed = 2*Math.PI;
   public static final double kModuleMaxSpeed = 5.0;
@@ -39,7 +41,7 @@ public class Drivetrain extends SubsystemBase {
 
   private final Field2d m_fieldMap = new Field2d();
   
-  private final Pose2d lastPos;
+  private Pose2d startPos;
 
   private Translation2d centerOfRotation = new Translation2d(0,0);
 
@@ -59,12 +61,21 @@ public class Drivetrain extends SubsystemBase {
         });
       //new SwerveDriveOdometry(m_kinematics, new Rotation2d(-2*Math.PI*m_gyro.getYaw()/360d));//getRotation2d());
 
-  public Drivetrain(Pose2d startingPose) {
-    this.lastPos = startingPose;
+  private Drivetrain(Pose2d startingPose) {
+    this.startPos = startingPose;
     m_gyro.setYaw(startingPose.getRotation().getDegrees());
 
     //The Field2d class allows robot visualization in the simulation GUI.
     SmartDashboard.putData("Field", m_fieldMap);
+  }
+
+  public static Drivetrain getInstance() {
+    if(instance==null) instance = new Drivetrain(new Pose2d());
+    return instance;
+  }
+
+  public void overrideCurrentPos(Pose2d pos) {
+    this.startPos = pos;
   }
 
   /**
@@ -139,9 +150,4 @@ public class Drivetrain extends SubsystemBase {
 
   @Override 
   public void simulationPeriodic() {}
-
-  //Private helper methods
-  private Pose2d getDeltaPos() {
-    return this.m_odometry.getPoseMeters().relativeTo(this.lastPos);
-  }
 }
