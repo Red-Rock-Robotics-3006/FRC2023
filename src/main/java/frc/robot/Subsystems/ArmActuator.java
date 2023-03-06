@@ -14,24 +14,19 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ArmActuator extends SubsystemBase {
 
-    /*Whatever the max motor speed is, used for telling the motor how fast to rotate */
-    double maxMotorSpeed;
-
 
 
     /* Replace with min and max values of the absolute encoders on x & y axis */
-    double yRotMin = 0.0;
-    double yRotMax = 360.0;
-    double xRotMin = 0.0;
-    double xRotMax = 360.0;
+    private final double yRotMin = 0.0;
+    private final double yRotMax = 360.0;
+    private final double xRotMin = 0.0;
+    private final double xRotMax = 360.0;
 
-    /* Replace with min and max values of the x & y positions of the arm 
-     * DO NOT CHANGE MIN VALUES FROM 0 IT WILL PROBABLY BREAK SOMETHING
-    */
-    double yMin = 0.0;
-    double yMax = 100.0;
-    double xMin = 0.0;
-    double xMax = 100.0;
+    /* Replace with min and max values of the x & y positions of the arm */
+    private final double yMin = 0.0;
+    private final double yMax = 100.0;
+    private final double xMin = 0.0;
+    private final double xMax = 100.0;
 
     /*Get from absolue encoders */
     double yRot = 0;
@@ -53,23 +48,23 @@ public class ArmActuator extends SubsystemBase {
         targetY = targetPos.getY();
 
         
-        /* Fix while loop to stop once the arm is in position */
+        /* Keep arm updating and moving until it reaches targetPos */
         while(xDiff!=0||yDiff!=0){
             double xDiff = xPos - targetX;
             double yDiff = yPos - targetY;
 
-            setMotorSpeed(yDiff, xDiff);
+            moveToPos(yDiff, xDiff);
         }
     }
     public void setTargetPosSafeTravel(Translation2d pos, double arcRadius) {}
     public Translation2d getMeasuredPos() { return new Translation2d(); }
 
-
-    public double setMotorSpeed(double vDiff, double hDiff){
+    /* Needs to be run repeatedly to make the arm slow to a stop */
+    public double moveToPos(double vDiff, double hDiff){
         
         
-        double yMotorPercent = (Math.pow(vDiff, 0.333) / Math.pow(yMax, 0.333));
-        double xMotorPercent = (Math.pow(hDiff, 0.333) / Math.pow(xMax, 0.333));
+        double yMotorPercent = (Math.cbrt(vDiff) / Math.cbrt(yMax - yMin));
+        double xMotorPercent = (Math.cbrt(hDiff) / Math.cbrt(xMax - xMin));
 
         
         moveYMotor(yMotorPercent);
