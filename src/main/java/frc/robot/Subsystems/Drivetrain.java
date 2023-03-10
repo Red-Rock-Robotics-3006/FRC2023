@@ -41,7 +41,7 @@ public class Drivetrain extends SubsystemBase {
   
   private final Pose2d lastPos;
 
-  private final Translation2d centerOfRotation;
+  private Translation2d centerOfRotation;
 
   private final SwerveDriveKinematics m_kinematics =
       new SwerveDriveKinematics(
@@ -81,13 +81,13 @@ public class Drivetrain extends SubsystemBase {
    * @param rot Angular rate of the robot in degrees.
    * @param fieldRelative Whether the provided x and y speeds are relative to the field.
    */
-  /*public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
+  public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
     if (Math.abs(xSpeed) + Math.abs(ySpeed) + Math.abs(rot) > 0.1) {
       var swerveModuleStates =
           m_kinematics.toSwerveModuleStates(
               fieldRelative
                   ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, 2*Math.PI*(rot/360), new Rotation2d(-2*Math.PI*m_gyro.getYaw()/360d)) //High Risk Change!
-                  : new ChassisSpeeds(xSpeed, ySpeed, 2*Math.PI*(rot/360)));
+                  : new ChassisSpeeds(xSpeed, ySpeed, 2*Math.PI*(rot/360)),this.centerOfRotation);
       SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, kMaxSpeed); //Look into overloaded method with more parameters
       
       m_frontLeft.setDesiredState(swerveModuleStates[0]);
@@ -100,10 +100,11 @@ public class Drivetrain extends SubsystemBase {
       m_backLeft.zeroPower();
       m_backRight.zeroPower();
     }
-  }*/
-  public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
+  }
+  /*public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
     if (Math.abs(xSpeed) + Math.abs(ySpeed) + Math.abs(rot) > 0.1) {
       // Calculate the current position of each swerve module relative to the center of rotation
+
       SwerveModulePosition[] modulePositions = new SwerveModulePosition[] {
         m_kinematics.toSwerveModuleState(new ChassisSpeeds(0, 0, 0), new Rotation2d(), centerOfRotation).moduleState,
         m_kinematics.toSwerveModuleState(new ChassisSpeeds(0, 0, 0), new Rotation2d(), centerOfRotation).moduleState,
@@ -123,17 +124,17 @@ public class Drivetrain extends SubsystemBase {
       SwerveDriveKinematics.normalizeWheelSpeeds(swerveModuleStates, kModuleMaxSpeed);
   
       // Set the desired state for each swerve module
-      m_frontLeft.setDesiredState(swerveModuleStates[0], modulePositions[0]);
-      m_frontRight.setDesiredState(swerveModuleStates[1], modulePositions[1]);
-      m_backLeft.setDesiredState(swerveModuleStates[2], modulePositions[2]);
-      m_backRight.setDesiredState(swerveModuleStates[3], modulePositions[3]);
+      m_frontLeft.setDesiredState(swerveModuleStates[0]);
+      m_frontRight.setDesiredState(swerveModuleStates[1]);
+      m_backLeft.setDesiredState(swerveModuleStates[2]);
+      m_backRight.setDesiredState(swerveModuleStates[3]);
     } else {
       m_frontLeft.zeroPower();
       m_frontRight.zeroPower();
       m_backLeft.zeroPower();
       m_backRight.zeroPower();
     }
-  }
+  }*/
 
   public SwerveModuleState[] getModuleStates() {
     return new SwerveModuleState[]{ m_frontLeft.getState(), m_frontRight.getState(), m_backLeft.getState(), m_backRight.getState() };
