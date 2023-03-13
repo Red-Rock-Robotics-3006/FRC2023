@@ -41,6 +41,8 @@ public class Drivetrain extends SubsystemBase {
   
   private final Pose2d lastPos;
 
+  private Translation2d centerOfRotation;
+
   private final SwerveDriveKinematics m_kinematics =
       new SwerveDriveKinematics(
           m_frontLeftLocation, m_frontRightLocation, m_backLeftLocation, m_backRightLocation);
@@ -58,6 +60,12 @@ public class Drivetrain extends SubsystemBase {
       //new SwerveDriveOdometry(m_kinematics, new Rotation2d(-2*Math.PI*m_gyro.getYaw()/360d));//getRotation2d());
 
   public Drivetrain(Pose2d startingPose) {
+
+    double centerX = (m_frontLeftLocation.getX() + m_frontRightLocation.getX() + m_backLeftLocation.getX() + m_backRightLocation.getX()) / 4;
+    double centerY = (m_frontLeftLocation.getY() + m_frontRightLocation.getY() + m_backLeftLocation.getY() + m_backRightLocation.getY()) / 4;
+
+    this.centerOfRotation = new Translation2d(centerX, centerY);
+
     this.lastPos = startingPose;
     m_gyro.setYaw(startingPose.getRotation().getDegrees());
 
@@ -79,7 +87,7 @@ public class Drivetrain extends SubsystemBase {
           m_kinematics.toSwerveModuleStates(
               fieldRelative
                   ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, 2*Math.PI*(rot/360), new Rotation2d(-2*Math.PI*m_gyro.getYaw()/360d)) //High Risk Change!
-                  : new ChassisSpeeds(xSpeed, ySpeed, 2*Math.PI*(rot/360)));
+                  : new ChassisSpeeds(xSpeed, ySpeed, 2*Math.PI*(rot/360)),this.centerOfRotation);
       SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, kMaxSpeed); //Look into overloaded method with more parameters
       
       m_frontLeft.setDesiredState(swerveModuleStates[0]);
@@ -93,6 +101,40 @@ public class Drivetrain extends SubsystemBase {
       m_backRight.zeroPower();
     }
   }
+  /*public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
+    if (Math.abs(xSpeed) + Math.abs(ySpeed) + Math.abs(rot) > 0.1) {
+      // Calculate the current position of each swerve module relative to the center of rotation
+
+      SwerveModulePosition[] modulePositions = new SwerveModulePosition[] {
+        m_kinematics.toSwerveModuleState(new ChassisSpeeds(0, 0, 0), new Rotation2d(), centerOfRotation).moduleState,
+        m_kinematics.toSwerveModuleState(new ChassisSpeeds(0, 0, 0), new Rotation2d(), centerOfRotation).moduleState,
+        m_kinematics.toSwerveModuleState(new ChassisSpeeds(0, 0, 0), new Rotation2d(), centerOfRotation).moduleState,
+        m_kinematics.toSwerveModuleState(new ChassisSpeeds(0, 0, 0), new Rotation2d(), centerOfRotation).moduleState
+      };
+  
+      // Calculate the desired speed and angle for each swerve module
+      var swerveModuleStates =
+          m_kinematics.toSwerveModuleStates(
+              fieldRelative
+                  ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, 2*Math.PI*(rot/360), new Rotation2d(-2*Math.PI*m_gyro.getYaw()/360d)) //High Risk Change!
+                  : new ChassisSpeeds(xSpeed, ySpeed, 2*Math.PI*(rot/360)),
+              this.centerOfRotation);
+  
+      // Make sure the swerve module speeds aren't greater than kModuleMaxSpeed
+      SwerveDriveKinematics.normalizeWheelSpeeds(swerveModuleStates, kModuleMaxSpeed);
+  
+      // Set the desired state for each swerve module
+      m_frontLeft.setDesiredState(swerveModuleStates[0]);
+      m_frontRight.setDesiredState(swerveModuleStates[1]);
+      m_backLeft.setDesiredState(swerveModuleStates[2]);
+      m_backRight.setDesiredState(swerveModuleStates[3]);
+    } else {
+      m_frontLeft.zeroPower();
+      m_frontRight.zeroPower();
+      m_backLeft.zeroPower();
+      m_backRight.zeroPower();
+    }
+  }*/
 
   public SwerveModuleState[] getModuleStates() {
     return new SwerveModuleState[]{ m_frontLeft.getState(), m_frontRight.getState(), m_backLeft.getState(), m_backRight.getState() };
@@ -110,6 +152,11 @@ public class Drivetrain extends SubsystemBase {
     m_frontRight.zeroModule();
     m_backLeft.zeroModule();
     m_backRight.zeroModule();
+  }
+
+  public void setCenterOfRotation(Translation2d center)
+  {
+    this.centerOfRotation = center;
   }
 
   /** Updates the field relative position of the robot. */
