@@ -29,13 +29,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-
-
-    // Set autos as options for the sendablechooser
-    m_chooser.setDefaultOption("First Auto", kFirstAuto);
-    m_chooser.addOption("Second Auto", kSecondAuto);
-    SmartDashboard.putData("Auto choices", m_chooser);
-
     // Flush NetworkTables every loop. This ensures that robot pose and other values
     // are sent during every loop iteration.
     setNetworkTablesFlushEnabled(true);
@@ -48,30 +41,15 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-
-    m_autoSelected = m_chooser.getSelected();
-    System.out.println("Auto selected: " + m_autoSelected);
     m_robotContainer.getAutonomousCommand().schedule();
   }
 
   @Override
-  public void autonomousPeriodic() {
-    switch (m_autoSelected) {
-      case kSecondAuto:
-      // Probably call to auto method?
-      System.out.println("The first auto should run here");
-      break;
-      case kFirstAuto:
-      default:
-      // Auto code?
-      System.out.println("The first auto should run here");
-      break;
-
-    }
-  }
+  public void autonomousPeriodic() {}
 
   @Override
   public void teleopInit() {
+    CommandScheduler.getInstance().cancelAll();
     m_robotContainer.enableControllers();
   }
 
