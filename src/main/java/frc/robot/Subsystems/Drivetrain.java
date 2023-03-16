@@ -41,6 +41,8 @@ public class Drivetrain extends SubsystemBase {
   
   private final Pose2d lastPos;
 
+  private Translation2d centerOfRotation = new Translation2d(0,0);
+
   private final SwerveDriveKinematics m_kinematics =
       new SwerveDriveKinematics(
           m_frontLeftLocation, m_frontRightLocation, m_backLeftLocation, m_backRightLocation);
@@ -79,7 +81,7 @@ public class Drivetrain extends SubsystemBase {
           m_kinematics.toSwerveModuleStates(
               fieldRelative
                   ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, 2*Math.PI*(rot/360), new Rotation2d(-2*Math.PI*m_gyro.getYaw()/360d)) //High Risk Change!
-                  : new ChassisSpeeds(xSpeed, ySpeed, 2*Math.PI*(rot/360)));
+                  : new ChassisSpeeds(xSpeed, ySpeed, 2*Math.PI*(rot/360)),this.centerOfRotation);
       SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, kMaxSpeed); //Look into overloaded method with more parameters
       
       m_frontLeft.setDesiredState(swerveModuleStates[0]);
@@ -110,6 +112,11 @@ public class Drivetrain extends SubsystemBase {
     m_frontRight.zeroModule();
     m_backLeft.zeroModule();
     m_backRight.zeroModule();
+  }
+
+  public void setCenterOfRotation(Translation2d center)
+  {
+    this.centerOfRotation = center;
   }
 
   /** Updates the field relative position of the robot. */

@@ -18,7 +18,7 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     // Flush NetworkTables every loop. This ensures that robot pose and other values
     // are sent during every loop iteration.
-    setNetworkTablesFlushEnabled(true);
+    setNetworkTablesFlushEnabled(true); 
   }
 
   @Override
