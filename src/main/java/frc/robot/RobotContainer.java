@@ -15,9 +15,9 @@ public class RobotContainer {
     private final Joystick m_joystick2 = new Joystick(1);
     private final Drivetrain m_swerve = new Drivetrain(new Pose2d());
 
-    private SlewRateLimiter filterForAxis1 = new SlewRateLimiter(0.5); 
-    private SlewRateLimiter filterForAxis2 = new SlewRateLimiter(0.5);
-    private SlewRateLimiter filterForRotation = new SlewRateLimiter(0.5);
+    private SlewRateLimiter filterForAxis1 = new SlewRateLimiter(100); //Lower values to limit
+    private SlewRateLimiter filterForAxis2 = new SlewRateLimiter(100); //Lower values to limit
+    private SlewRateLimiter filterForRotation = new SlewRateLimiter(100); //Lower values to limit
     //mess with parameter a bit to get desired output-flow??
 
     //Auto selection
@@ -42,7 +42,7 @@ public class RobotContainer {
             () -> m_swerve.drive(
                 filterForAxis1.calculate(m_joystick1.getRawAxis(0)), 
                 filterForAxis2.calculate(m_joystick1.getRawAxis(1)), 
-                filterForRotation.calculate(m_joystick1.getRawAxis(2)*100),
+                filterForRotation.calculate(m_joystick1.getRawAxis(2))*100,
                 true
             ),
             m_swerve
