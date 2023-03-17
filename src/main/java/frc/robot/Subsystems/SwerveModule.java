@@ -19,7 +19,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class SwerveModule extends SubsystemBase {
   private static final double kWheelRadius = 0.0508;
   private static final int kFalconEncoderResolution = 2048;
-  private static final double kDriveGearRatio = 6.75; //?
+  private static final double kDriveGearRatio = 6.54; //?
+  private static final double kMaxSpeed = 5.03;
 
   private SwerveModuleState targetState;
 
@@ -134,7 +135,7 @@ public class SwerveModule extends SubsystemBase {
     );
 
     m_turningMotor.set(ControlMode.PercentOutput, turnOutput);
-    m_driveMotor.set(ControlMode.PercentOutput, 0.5*this.targetState.speedMetersPerSecond);
+    m_driveMotor.set(ControlMode.PercentOutput, this.targetState.speedMetersPerSecond/this.kMaxSpeed);
 
     SmartDashboard.putNumber("Target Angle: " + m_turningMotor.getBaseID(), targetAngle/360);
     SmartDashboard.putNumber("Motor Power: " + m_turningMotor.getBaseID(), turnOutput);
