@@ -28,7 +28,7 @@ public class RobotContainer {
 
     public RobotContainer() {
         //Auto selection setup
-        m_chooser.setDefaultOption(this.autoCommands[0].getName(), this.autoCommands[0]);
+        if(this.autoCommands.length != 0) m_chooser.setDefaultOption(this.autoCommands[0].getName(), this.autoCommands[0]);
         for(int i = 1; i < this.autoCommands.length; i++) {
             m_chooser.addOption(this.autoCommands[i].getName(), this.autoCommands[i]);
         }
