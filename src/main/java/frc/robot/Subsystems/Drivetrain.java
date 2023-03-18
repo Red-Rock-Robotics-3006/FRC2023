@@ -25,15 +25,15 @@ public class Drivetrain extends SubsystemBase {
   public static final double kMaxAngularSpeed = 2*Math.PI;
   public static final double kModuleMaxSpeed = 5.0;
 
-  private final Translation2d m_frontLeftLocation = new Translation2d(-0.381, 0.381);
-  private final Translation2d m_frontRightLocation = new Translation2d(-0.381, -0.381);
-  private final Translation2d m_backLeftLocation = new Translation2d(0.381, 0.381);
-  private final Translation2d m_backRightLocation = new Translation2d(0.381, -0.381);
+  private final Translation2d m_frontLeftLocation = new Translation2d(-0.381, -0.381);
+  private final Translation2d m_frontRightLocation = new Translation2d(0.381, -0.381);
+  private final Translation2d m_backLeftLocation = new Translation2d(-0.381, 0.381);
+  private final Translation2d m_backRightLocation = new Translation2d(0.381, 0.381);
 
-  private final SwerveModule m_frontLeft = new SwerveModule(20, 6, 0, false);
-  private final SwerveModule m_frontRight = new SwerveModule(11, 8, 41, true);
-  private final SwerveModule m_backLeft = new SwerveModule(4, 5, 44, false);
-  private final SwerveModule m_backRight = new SwerveModule(50, 3, 43, true);
+  private final SwerveModule m_frontRight = new SwerveModule(20, 6, 0, false); //m_frontLeft
+  private final SwerveModule m_backRight = new SwerveModule(11, 8, 41, true); //m_frontRight
+  private final SwerveModule m_frontLeft = new SwerveModule(4, 5, 44, false); //m_backLeft
+  private final SwerveModule m_backLeft = new SwerveModule(50, 3, 43, true); //m_backRight
 
   private final Pigeon2 m_gyro = new Pigeon2(45);
 

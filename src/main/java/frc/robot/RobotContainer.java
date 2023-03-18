@@ -64,9 +64,9 @@ public class RobotContainer {
 
         RunCommand dc = new RunCommand(
             () -> m_swerve.drive(
-                filterForAxis1.calculate(m_joystick1.getRawAxis(0)), 
-                filterForAxis2.calculate(m_joystick1.getRawAxis(1)), 
-                filterForRotation.calculate(m_joystick1.getRawAxis(2))*100,
+                filterForAxis1.calculate(m_joystick1.getRawAxis(0)*2), 
+                filterForAxis2.calculate(m_joystick1.getRawAxis(1)*2), 
+                filterForRotation.calculate(Math.pow(m_joystick1.getRawAxis(2),3)*2)*100,
                 true
             ),
             m_swerve

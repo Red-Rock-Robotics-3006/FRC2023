@@ -85,7 +85,7 @@ public class SwerveModule extends SubsystemBase {
     SwerveModuleState state = new SwerveModuleState(
       desiredState.speedMetersPerSecond, 
       new Rotation2d(
-        2*Math.PI*targetAngle/360
+        2*Math.PI*(targetAngle)/360
       ));
     
       SmartDashboard.putNumber("Raw Target Angle" + m_turningMotor.getBaseID(), targetAngle/360d);
