@@ -42,6 +42,7 @@ public class RobotContainer {
             m_chooser.addOption(this.autoCommands[i].getName(), this.autoCommands[i]);
         }
         SmartDashboard.putData("Auto choices", m_chooser);
+
         configureButtonBindings();
     }
     public void configureButtonBindings()
@@ -59,6 +60,7 @@ public class RobotContainer {
             .onTrue(new InstantCommand(() -> {m_extender.setSpeed(-0.2);}))
             .onFalse(new InstantCommand(() -> {m_extender.setSpeed(0.0);}));
     }
+    
     public void enableControllers() {
         if(m_swerve.getDefaultCommand() != null) m_swerve.getDefaultCommand().cancel();
 
