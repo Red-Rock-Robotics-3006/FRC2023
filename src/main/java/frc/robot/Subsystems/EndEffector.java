@@ -9,7 +9,7 @@ import static edu.wpi.first.wpilibj.DoubleSolenoid.Value.*;
 
 public class EndEffector extends SubsystemBase {
 
-    DoubleSolenoid handSolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 0, 1);
+    private DoubleSolenoid handSolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 0, 1);
 
     private boolean pcmMode = false; //True is forward, false is back
 
@@ -21,9 +21,9 @@ public class EndEffector extends SubsystemBase {
 
     public void togglePneumatics()
     {
-        pcmMode = !pcmMode;
-        if(pcmMode) handSolenoid.set(kForward);
-        else{ handSolenoid.set(kReverse); }
+        this.pcmMode = !this.pcmMode;
+        this.handSolenoid.set(this.pcmMode ? kForward : kReverse);
+    }
 
     public enum Mode {
         CUBE,
