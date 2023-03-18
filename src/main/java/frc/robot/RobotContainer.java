@@ -20,7 +20,7 @@ public class RobotContainer {
     private final Joystick m_joystick1 = new Joystick(0);
     private final CommandXboxController mechStick = new CommandXboxController(1);
 
-    private final Drivetrain m_swerve = new Drivetrain(new Pose2d());
+    private final Drivetrain m_swerve = Drivetrain.getInstance();
     private final Elevator m_elevator = new Elevator();
     private final HorizontalExtender m_extender = new HorizontalExtender();
 
