@@ -5,31 +5,30 @@ import com.revrobotics.CANSparkMaxLowLevel;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class Elevator extends SubsystemBase{
+public class Elevator extends SubsystemBase {
+  public CANSparkMax elevatorLeft = new CANSparkMax(57, CANSparkMaxLowLevel.MotorType.kBrushless);
+  public CANSparkMax elevatorRight = new CANSparkMax(59, CANSparkMaxLowLevel.MotorType.kBrushless);
 
-    public CANSparkMax liftOne = new CANSparkMax(57, CANSparkMaxLowLevel.MotorType.kBrushless);
-    public CANSparkMax liftTwo = new CANSparkMax(59, CANSparkMaxLowLevel.MotorType.kBrushless);
-    public Elevator()
-    {
-        this.liftOne.restoreFactoryDefaults();
-        this.liftOne.setIdleMode(CANSparkMax.IdleMode.kBrake);
+  public Elevator() {
+    this.elevatorLeft.restoreFactoryDefaults();
+    this.elevatorRight.restoreFactoryDefaults();
+    this.elevatorLeft.setIdleMode(CANSparkMax.IdleMode.kBrake);
+    this.elevatorRight.setIdleMode(CANSparkMax.IdleMode.kBrake);
+  }
 
-        this.liftTwo.restoreFactoryDefaults();
-        this.liftTwo.setIdleMode(CANSparkMax.IdleMode.kBrake);
-    }
+  @Override
+  public void periodic() {
+    
+  }
 
-    @Override
-    public void periodic() {
-      
-    }
-  
-    @Override
-    public void simulationPeriodic() {
-      
-    }
+  @Override
+  public void simulationPeriodic() {
+    
+  }
 
-    public void setMotorSpeed(float targetSpeed){
-      this.liftOne.set(targetSpeed);
-      this.liftTwo.set(targetSpeed);
-    }
+  public void setSpeed(double targetSpeed)
+  {
+    this.elevatorLeft.set(targetSpeed);
+    this.elevatorRight.set(targetSpeed);
+  }
 }
