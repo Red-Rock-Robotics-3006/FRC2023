@@ -27,21 +27,23 @@ public class Drivetrain extends SubsystemBase {
   public static final double kMaxAngularSpeed = 2*Math.PI;
   public static final double kModuleMaxSpeed = 5.0;
 
-  private final Translation2d m_frontLeftLocation = new Translation2d(-0.381, 0.381);
-  private final Translation2d m_frontRightLocation = new Translation2d(-0.381, -0.381);
-  private final Translation2d m_backLeftLocation = new Translation2d(0.381, 0.381);
-  private final Translation2d m_backRightLocation = new Translation2d(0.381, -0.381);
+  private final Translation2d m_frontLeftLocation = new Translation2d(-0.381, -0.381);
+  private final Translation2d m_frontRightLocation = new Translation2d(0.381, -0.381);
+  private final Translation2d m_backLeftLocation = new Translation2d(-0.381, 0.381);
+  private final Translation2d m_backRightLocation = new Translation2d(0.381, 0.381);
 
-  private final SwerveModule m_frontLeft = new SwerveModule(20, 6, 0, false);
-  private final SwerveModule m_frontRight = new SwerveModule(11, 8, 41, true);
-  private final SwerveModule m_backLeft = new SwerveModule(4, 5, 44, false);
-  private final SwerveModule m_backRight = new SwerveModule(50, 3, 43, true);
+  private final SwerveModule m_frontRight = new SwerveModule(20, 6, 0, false); //m_frontLeft
+  private final SwerveModule m_backRight = new SwerveModule(11, 8, 41, true); //m_frontRight
+  private final SwerveModule m_frontLeft = new SwerveModule(4, 5, 44, false); //m_backLeft
+  private final SwerveModule m_backLeft = new SwerveModule(50, 3, 43, true); //m_backRight
 
   private final Pigeon2 m_gyro = GyroSubsystem.getPigeonInstance();
 
   private final Field2d m_fieldMap = new Field2d();
   
   private Pose2d startPos;
+
+  private Translation2d centerOfRotation = new Translation2d(0,0);
 
   private final SwerveDriveKinematics m_kinematics =
       new SwerveDriveKinematics(
@@ -90,7 +92,7 @@ public class Drivetrain extends SubsystemBase {
           m_kinematics.toSwerveModuleStates(
               fieldRelative
                   ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, 2*Math.PI*(rot/360), new Rotation2d(-2*Math.PI*m_gyro.getYaw()/360d)) //High Risk Change!
-                  : new ChassisSpeeds(xSpeed, ySpeed, 2*Math.PI*(rot/360)));
+                  : new ChassisSpeeds(xSpeed, ySpeed, 2*Math.PI*(rot/360)),this.centerOfRotation);
       SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, kMaxSpeed); //Look into overloaded method with more parameters
       
       m_frontLeft.setDesiredState(swerveModuleStates[0]);
@@ -121,6 +123,11 @@ public class Drivetrain extends SubsystemBase {
     m_frontRight.zeroModule();
     m_backLeft.zeroModule();
     m_backRight.zeroModule();
+  }
+
+  public void setCenterOfRotation(Translation2d center)
+  {
+    this.centerOfRotation = center;
   }
 
   /** Updates the field relative position of the robot. */
