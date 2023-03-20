@@ -6,6 +6,7 @@ package frc.robot.Subsystems;
 
 import com.ctre.phoenix.sensors.Pigeon2;
 
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -46,24 +47,25 @@ public class Drivetrain extends SubsystemBase {
   private Translation2d centerOfRotation = new Translation2d(0,0);
 
   private final SwerveDriveKinematics m_kinematics =
-      new SwerveDriveKinematics(
-          m_frontLeftLocation, m_frontRightLocation, m_backLeftLocation, m_backRightLocation);
+    new SwerveDriveKinematics(
+        m_frontLeftLocation, m_frontRightLocation, m_backLeftLocation, m_backRightLocation);
+  private final SwerveDrivePoseEstimator m_PoseEstimator;
 
-  private final SwerveDriveOdometry m_odometry =
-      new SwerveDriveOdometry(
-        m_kinematics, 
-        new Rotation2d(), 
+  private Drivetrain(Pose2d startingPose) {
+    this.startPos = startingPose;
+    m_gyro.setYaw(startingPose.getRotation().getDegrees());
+    this.m_PoseEstimator = 
+      new SwerveDrivePoseEstimator(
+        this.m_kinematics, 
+        new Rotation2d(0),
         new SwerveModulePosition[]{
           new SwerveModulePosition(),
           new SwerveModulePosition(),
           new SwerveModulePosition(),
           new SwerveModulePosition()
-        });
-      //new SwerveDriveOdometry(m_kinematics, new Rotation2d(-2*Math.PI*m_gyro.getYaw()/360d));//getRotation2d());
-
-  private Drivetrain(Pose2d startingPose) {
-    this.startPos = startingPose;
-    m_gyro.setYaw(startingPose.getRotation().getDegrees());
+        },
+        new Pose2d()
+      );
 
     //The Field2d class allows robot visualization in the simulation GUI.
     SmartDashboard.putData("Field", m_fieldMap);
@@ -91,7 +93,7 @@ public class Drivetrain extends SubsystemBase {
       var swerveModuleStates =
           m_kinematics.toSwerveModuleStates(
               fieldRelative
-                  ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, 2*Math.PI*(rot/360), new Rotation2d(-2*Math.PI*m_gyro.getYaw()/360d)) //High Risk Change!
+                  ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, 2*Math.PI*(rot/360), m_PoseEstimator.getEstimatedPosition().getRotation()) //High Risk Change! //new Rotation2d(-2*Math.PI*m_gyro.getYaw()/360d))
                   : new ChassisSpeeds(xSpeed, ySpeed, 2*Math.PI*(rot/360)),this.centerOfRotation);
       SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, kMaxSpeed); //Look into overloaded method with more parameters
       
@@ -131,18 +133,18 @@ public class Drivetrain extends SubsystemBase {
   }
 
   /** Updates the field relative position of the robot. */
-  public void updateOdometry() {
-    m_odometry.update(
-        new Rotation2d(-2*Math.PI*m_gyro.getYaw()/360),
+  private void updateOdometry() {
+    m_PoseEstimator.update(
+        new Rotation2d(-2*Math.PI*m_gyro.getYaw()/360), //WARNING: May break when gyro angle is reset (Upon further inspection I don't think so but it is still a risk)
         new SwerveModulePosition[]{
           m_frontLeft.getPos(),
           m_frontRight.getPos(),
           m_backLeft.getPos(),
           m_backRight.getPos()
         });
-    m_fieldMap.setRobotPose(m_odometry.getPoseMeters());
+    m_fieldMap.setRobotPose(m_PoseEstimator.getEstimatedPosition());
   }
-  
+
   @Override
   public void periodic() {
     updateOdometry();
