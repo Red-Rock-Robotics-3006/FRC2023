@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -29,14 +30,22 @@ public class RobotContainer {
     private SlewRateLimiter filterForRotation = new SlewRateLimiter(100); //Lower values to limit
     //mess with parameter a bit to get desired output-flow??
 
-    //Auto selection
+    // Auto selection
     private Command[] autoCommands = new Command[]{};
     private final SendableChooser<Command> m_chooser = new SendableChooser<>();
     
     private Command driveCommand = null;
 
     public RobotContainer() {
-        //Auto selection setup
+        // Post to SmartDashboard 
+        // https://docs.wpilib.org/en/stable/docs/software/dashboards/
+        //  smartdashboard/displaying-status-of-commands-and-subsystems.html
+        SmartDashboard.putData(CommandScheduler.getInstance());
+        SmartDashboard.putData(m_swerve);
+        SmartDashboard.putData(m_elevator);
+        SmartDashboard.putData(m_extender);
+
+        // Auto selection setup
         if(this.autoCommands.length != 0) m_chooser.setDefaultOption(this.autoCommands[0].getName(), this.autoCommands[0]);
         for(int i = 1; i < this.autoCommands.length; i++) {
             m_chooser.addOption(this.autoCommands[i].getName(), this.autoCommands[i]);
