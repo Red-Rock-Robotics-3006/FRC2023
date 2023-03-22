@@ -35,7 +35,8 @@ public class CSBalance extends CommandBase {
         //PID Angle Correction
         if(this.angleCorrection) {
             double linearControl = Math.pow(GyroSubsystem.getPigeonInstance().getYaw()/360, 3)*0.1;
-            Drivetrain.getInstance().drive(0, 0.1, linearControl, true);
+            System.out.println(linearControl);
+            //Drivetrain.getInstance().drive(0, 0.1, linearControl, true);
         }
     }
 
