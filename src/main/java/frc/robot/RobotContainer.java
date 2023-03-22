@@ -24,10 +24,14 @@ public class RobotContainer {
     private final Drivetrain m_swerve = new Drivetrain(new Pose2d());
     private final Elevator m_elevator = new Elevator();
     private final HorizontalExtender m_extender = new HorizontalExtender();
+<<<<<<< HEAD
 =======
     private final Joystick m_joystick2 = new Joystick(1);
     private final Drivetrain m_swerve = Drivetrain.getInstance();
 >>>>>>> 4a99616 (Drivetrain converted to singleton)
+=======
+    private final PneumaticsTest pneu = new PneumaticsTest();
+>>>>>>> 4581ebe (Pneumatics now works ur damn welcome.)
 
     private SlewRateLimiter filterForAxis1 = new SlewRateLimiter(100); //Lower values to limit
     private SlewRateLimiter filterForAxis2 = new SlewRateLimiter(100); //Lower values to limit
@@ -52,6 +56,8 @@ public class RobotContainer {
     }
     public void configureButtonBindings()
     {
+        new JoystickButton(m_joystick1, 7)
+            .onTrue(new InstantCommand(() -> GyroSubsystem.getPigeonInstance().setYaw(0)));
         mechStick.y()
             .onTrue(new InstantCommand(() -> {m_elevator.setSpeed(0.2);}))
             .onFalse(new InstantCommand(() -> {m_elevator.setSpeed(0.0);}));
@@ -64,6 +70,9 @@ public class RobotContainer {
         mechStick.b()
             .onTrue(new InstantCommand(() -> {m_extender.setSpeed(-0.2);}))
             .onFalse(new InstantCommand(() -> {m_extender.setSpeed(0.0);}));
+        mechStick.rightBumper()
+            .onTrue(new InstantCommand(() -> {pneu.toggleSolenoid();}))
+            .onFalse(new InstantCommand(() -> {pneu.toggleSolenoid();}));
     }
     
     public void enableControllers() {
@@ -71,8 +80,8 @@ public class RobotContainer {
 
         RunCommand dc = new RunCommand(
             () -> m_swerve.drive(
-                filterForAxis1.calculate(m_joystick1.getRawAxis(0)*2), 
-                filterForAxis2.calculate(m_joystick1.getRawAxis(1)*2), 
+                filterForAxis1.calculate(m_joystick1.getRawAxis(0)*1.5), 
+                filterForAxis2.calculate(m_joystick1.getRawAxis(1)*1.5), 
                 filterForRotation.calculate(Math.pow(m_joystick1.getRawAxis(2),3)*2)*100,
                 true
             ),
