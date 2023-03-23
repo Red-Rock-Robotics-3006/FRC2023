@@ -1,5 +1,10 @@
 package frc.robot;
 
+
+import com.pathplanner.lib.PathConstraints;
+import com.pathplanner.lib.PathPlanner;
+import com.pathplanner.lib.PathPlannerTrajectory;
+
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.Joystick;
@@ -18,6 +23,8 @@ public class RobotContainer {
     private SlewRateLimiter filterForLeftRightUpDown = new SlewRateLimiter(0.5); 
     private SlewRateLimiter filterForRotation = new SlewRateLimiter(0.5);
     //mess with parameter a bit to get desired output-flow??
+
+    PathPlannerTrajectory AutoOne = PathPlanner.loadPath("New Path", new PathConstraints(5, 6));
 
     //Auto selection
     private Command[] autoCommands = new Command[]{};

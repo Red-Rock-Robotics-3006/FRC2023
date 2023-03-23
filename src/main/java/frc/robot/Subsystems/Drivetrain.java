@@ -5,7 +5,15 @@
 package frc.robot.Subsystems;
 
 import com.ctre.phoenix.sensors.Pigeon2;
+import com.pathplanner.lib.PathConstraints;
+import com.pathplanner.lib.PathPlanner;
+import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.auto.SwerveAutoBuilder;
+import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -16,7 +24,10 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+import java.util.function.Consumer;
 
 /** Represents a swerve drive style drivetrain. */
 @SuppressWarnings("unused")
@@ -40,6 +51,29 @@ public class Drivetrain extends SubsystemBase {
   private final Field2d m_fieldMap = new Field2d();
   
   private final Pose2d lastPos;
+
+  public Command followTrajectoryCommand(PathPlannerTrajectory traj, boolean isFirstPath) {
+    return new SequentialCommandGroup(
+        new InstantCommand(() -> {
+
+            if(isFirstPath) 
+              // Set odometry to initial holonomic pose
+              this.resetOdometry(traj);
+        }),
+        new PPSwerveControllerCommand(
+            traj,
+            m_odometry::getPoseMeters,
+            m_kinematics,
+            new PIDController(1.0, 1.0, 1.0),
+            new PIDController(1.0, 1.0, 1.0),
+            new PIDController(1.0, 1.0, 1.0),
+            this::setModuleStates,
+            true,
+            this
+        )
+    );
+}
+
 
   private final SwerveDriveKinematics m_kinematics =
       new SwerveDriveKinematics(
@@ -110,6 +144,25 @@ public class Drivetrain extends SubsystemBase {
     m_frontRight.zeroModule();
     m_backLeft.zeroModule();
     m_backRight.zeroModule();
+  }
+
+  public void setModuleStates(SwerveModuleState[] states){
+    m_frontLeft.setDesiredState(states[0]);
+    m_frontRight.setDesiredState(states[1]);
+    m_backLeft.setDesiredState(states[2]);
+    m_backRight.setDesiredState(states[3]);
+  }
+
+  public void resetOdometry(PathPlannerTrajectory traj){
+    m_odometry.update(
+      new Rotation2d(-2*Math.PI*m_gyro.getYaw()/360),
+      new SwerveModulePosition[]{
+        m_frontLeft.getPos(),
+        m_frontRight.getPos(),
+        m_backLeft.getPos(),
+        m_backRight.getPos()
+      });
+    m_fieldMap.setRobotPose(traj.getInitialHolonomicPose());
   }
 
   /** Updates the field relative position of the robot. */
