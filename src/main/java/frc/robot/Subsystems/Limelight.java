@@ -20,7 +20,7 @@ public class Limelight {
 
     private Limelight() {}
 
-    public Limelight getInstance() {
+    public static Limelight getInstance() {
         if(instance==null) instance = new Limelight();
         return instance;
     }
