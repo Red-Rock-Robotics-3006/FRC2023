@@ -88,8 +88,7 @@ public class EndEffector extends SubsystemBase {
     public double getCurrentAngle() {
         return k_cCoder.getAbsolutePosition();
     }
-
-
+    
     public enum Mode {
         CUBE,
         UPRIGHT_CONE,
