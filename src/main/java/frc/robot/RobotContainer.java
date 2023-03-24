@@ -14,6 +14,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Subsystems.*;
+import frc.robot.Subsystems.Arm.Elevator;
+import frc.robot.Subsystems.Arm.HorizontalExtender;
 import frc.robot.Commands.*;
 
 @SuppressWarnings("unused")

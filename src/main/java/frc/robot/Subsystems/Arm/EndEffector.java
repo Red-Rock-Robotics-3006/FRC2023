@@ -1,6 +1,5 @@
-package frc.robot.Subsystems;
+package frc.robot.Subsystems.Arm;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
@@ -18,7 +17,6 @@ public class EndEffector extends SubsystemBase {
     int wristm = 62;
     CANSparkMax intakemotor = new CANSparkMax(intakem, CANSparkMaxLowLevel.MotorType.kBrushless); //random int deviceId
     CANSparkMax wristmotor = new CANSparkMax(wristm, CANSparkMaxLowLevel.MotorType.kBrushless); //random int deviceId
-    //PIDController pid = new PIDController(kP);
     private final CANCoder k_cCoder;
     private double targetAngle;
 

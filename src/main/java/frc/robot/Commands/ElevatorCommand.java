@@ -1,7 +1,7 @@
 package frc.robot.Commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Subsystems.Elevator;
+import frc.robot.Subsystems.Arm.Elevator;
 
 public class ElevatorCommand extends CommandBase{
     private Elevator elevator = new Elevator();
