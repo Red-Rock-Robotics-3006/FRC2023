@@ -1,4 +1,4 @@
-package frc.robot.Other;
+package frc.robot.Data;
 
 import edu.wpi.first.math.geometry.Translation2d;
 
@@ -45,3 +45,4 @@ public class BoundingBox {
         return getCenter().plus(getBoxSizeFlipped().div(2));
     }
 }
+

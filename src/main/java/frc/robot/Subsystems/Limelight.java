@@ -6,10 +6,10 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import frc.robot.Data.BoundingBox;
+import frc.robot.Data.DetectedObject;
 import frc.robot.Exceptions.InvalidStateException;
 import frc.robot.Exceptions.NoTargetsFoundException;
-import frc.robot.Other.BoundingBox;
-import frc.robot.Other.DetectedObject;
 
 public class Limelight {
     private static Limelight instance;

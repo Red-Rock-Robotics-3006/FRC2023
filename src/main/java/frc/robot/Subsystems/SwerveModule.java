@@ -135,7 +135,7 @@ public class SwerveModule extends SubsystemBase {
     );
 
     m_turningMotor.set(ControlMode.PercentOutput, turnOutput);
-    m_driveMotor.set(ControlMode.PercentOutput, this.targetState.speedMetersPerSecond/this.kMaxSpeed);
+    m_driveMotor.set(ControlMode.PercentOutput, this.targetState.speedMetersPerSecond/kMaxSpeed);
 
     SmartDashboard.putNumber("Target Angle: " + m_turningMotor.getBaseID(), targetAngle/360);
     SmartDashboard.putNumber("Motor Power: " + m_turningMotor.getBaseID(), turnOutput);
