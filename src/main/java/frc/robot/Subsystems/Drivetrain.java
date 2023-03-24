@@ -37,7 +37,7 @@ public class Drivetrain extends SubsystemBase {
   private final SwerveModule m_frontLeft = new SwerveModule(4, 5, 44, false); //m_backLeft
   private final SwerveModule m_backLeft = new SwerveModule(50, 3, 43, true); //m_backRight
 
-  private final Pigeon2 m_gyro = GyroSubsystem.getPigeonInstance();
+  private final Pigeon2 m_gyro = Gyroscope.getPigeonInstance();
 
   private final Field2d m_fieldMap = new Field2d();
   
