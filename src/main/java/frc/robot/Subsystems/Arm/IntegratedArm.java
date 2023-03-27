@@ -32,6 +32,9 @@ public class IntegratedArm extends SubsystemBase {
   }
 
   //Measured State
+  public Pose2d getTargetPose() {
+    return this.m_target;
+  }
   public Pose2d getMeasuredPos() { 
     return new Pose2d(
       m_arm.getMeasuredPos()
@@ -49,6 +52,16 @@ public class IntegratedArm extends SubsystemBase {
   //Setters
   public void setTargetPos(Pose2d pose) {
       this.m_target = pose;
+      try {
+        this.m_endEffector.setTargetAngle(pose.getRotation().getDegrees());
+        this.m_arm.setTargetPos(
+          pose
+            .getTranslation()
+            .minus(this.m_endEffector.getTargetPiecePos())
+        );
+      } catch(IllegalArgumentException e) {
+        System.out.println(e.getMessage());
+      }
   }
   public void setMode(GamePieceMode mode) {
     this.m_mode = mode;
