@@ -46,20 +46,20 @@ public class Drivetrain extends SubsystemBase {
   private Translation2d centerOfRotation = new Translation2d(0,0);
 
   private final SwerveDriveKinematics m_kinematics =
-      new SwerveDriveKinematics(
-          m_frontLeftLocation, m_frontRightLocation, m_backLeftLocation, m_backRightLocation);
+    new SwerveDriveKinematics(
+      m_frontLeftLocation, m_frontRightLocation, m_backLeftLocation, m_backRightLocation);
 
   private final SwerveDriveOdometry m_odometry =
-      new SwerveDriveOdometry(
-        m_kinematics, 
-        new Rotation2d(), 
-        new SwerveModulePosition[]{
-          new SwerveModulePosition(),
-          new SwerveModulePosition(),
-          new SwerveModulePosition(),
-          new SwerveModulePosition()
-        });
-      //new SwerveDriveOdometry(m_kinematics, new Rotation2d(-2*Math.PI*m_gyro.getYaw()/360d));//getRotation2d());
+    new SwerveDriveOdometry(
+      m_kinematics, 
+      new Rotation2d(), 
+      new SwerveModulePosition[]{
+        new SwerveModulePosition(),
+        new SwerveModulePosition(),
+        new SwerveModulePosition(),
+        new SwerveModulePosition()
+      });
+    //new SwerveDriveOdometry(m_kinematics, new Rotation2d(-2*Math.PI*m_gyro.getYaw()/360d));//getRotation2d());
 
   private Drivetrain(Pose2d startingPose) {
     this.startPos = startingPose;
@@ -89,10 +89,10 @@ public class Drivetrain extends SubsystemBase {
   public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
     if (Math.abs(xSpeed) + Math.abs(ySpeed) + Math.abs(rot) > 0.1) {
       var swerveModuleStates =
-          m_kinematics.toSwerveModuleStates(
-              fieldRelative
-                  ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, 2*Math.PI*(rot/360), new Rotation2d(-2*Math.PI*m_gyro.getYaw()/360d)) //High Risk Change!
-                  : new ChassisSpeeds(xSpeed, ySpeed, 2*Math.PI*(rot/360)),this.centerOfRotation);
+        m_kinematics.toSwerveModuleStates(
+          fieldRelative
+            ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, 2*Math.PI*(rot/360), new Rotation2d(-2*Math.PI*m_gyro.getYaw()/360d)) //High Risk Change!
+            : new ChassisSpeeds(xSpeed, ySpeed, 2*Math.PI*(rot/360)),this.centerOfRotation);
       SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, kMaxSpeed); //Look into overloaded method with more parameters
       
       m_frontLeft.setDesiredState(swerveModuleStates[0]);
@@ -133,13 +133,13 @@ public class Drivetrain extends SubsystemBase {
   /** Updates the field relative position of the robot. */
   public void updateOdometry() {
     m_odometry.update(
-        new Rotation2d(-2*Math.PI*m_gyro.getYaw()/360),
-        new SwerveModulePosition[]{
-          m_frontLeft.getPos(),
-          m_frontRight.getPos(),
-          m_backLeft.getPos(),
-          m_backRight.getPos()
-        });
+      new Rotation2d(-2*Math.PI*m_gyro.getYaw()/360),
+      new SwerveModulePosition[]{
+        m_frontLeft.getPos(),
+        m_frontRight.getPos(),
+        m_backLeft.getPos(),
+        m_backRight.getPos()
+      });
     m_fieldMap.setRobotPose(m_odometry.getPoseMeters());
   }
   
