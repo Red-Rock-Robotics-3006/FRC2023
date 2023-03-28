@@ -52,6 +52,8 @@ public class Drivetrain extends SubsystemBase {
   
   private final Pose2d lastPos;
 
+  
+  // Fix pid controllers
   public Command followTrajectoryCommand(PathPlannerTrajectory traj, boolean isFirstPath) {
     return new SequentialCommandGroup(
         new InstantCommand(() -> {
@@ -153,6 +155,7 @@ public class Drivetrain extends SubsystemBase {
     m_backRight.setDesiredState(states[3]);
   }
 
+
   public void resetOdometry(PathPlannerTrajectory traj){
     m_odometry.update(
       new Rotation2d(-2*Math.PI*m_gyro.getYaw()/360),
@@ -189,5 +192,29 @@ public class Drivetrain extends SubsystemBase {
   //Private helper methods
   private Pose2d getDeltaPos() {
     return this.m_odometry.getPoseMeters().relativeTo(this.lastPos);
+  }
+
+  public SwerveDriveOdometry getOdometry()
+  {
+    return m_odometry;
+  }
+
+  public SwerveDriveKinematics getKinematics()
+  {
+    return m_kinematics;
+  }
+
+  public void resetPose(Pose2d lastPos)
+  {
+    m_odometry.resetPosition(
+      new Rotation2d(-2*Math.PI*m_gyro.getYaw()/360),
+      new SwerveModulePosition[]{
+        m_frontLeft.getPos(),
+        m_frontRight.getPos(),
+        m_backLeft.getPos(),
+        m_backRight.getPos()
+      },
+      lastPos
+    );
   }
 }

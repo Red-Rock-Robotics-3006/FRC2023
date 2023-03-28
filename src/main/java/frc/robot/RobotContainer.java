@@ -1,18 +1,30 @@
 package frc.robot;
 
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+import frc.robot.Subsystems.Drivetrain.*;
+
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.auto.PIDConstants;
+import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import frc.robot.Subsystems.Drivetrain;
+
+import java.util.function.Consumer;
 
 @SuppressWarnings("unused")
 public class RobotContainer {
@@ -24,7 +36,22 @@ public class RobotContainer {
     private SlewRateLimiter filterForRotation = new SlewRateLimiter(0.5);
     //mess with parameter a bit to get desired output-flow??
 
-    PathPlannerTrajectory AutoOne = PathPlanner.loadPath("New Path", new PathConstraints(5, 6));
+
+    // Load paths to trajectories
+    PathPlannerTrajectory BottomOut = PathPlanner.loadPath("Bottom-Out", new PathConstraints(1.5, 3.3));
+    PathPlannerTrajectory BottomStation = PathPlanner.loadPath("Bottom-Station", new PathConstraints(1.5, 3.3));
+    PathPlannerTrajectory BottomOutWait = PathPlanner.loadPath("Bottom-Out-Wait", new PathConstraints(1.5, 3.3));
+    PathPlannerTrajectory MiddleBottom = PathPlanner.loadPath("Middle-Bottom", new PathConstraints(1.5, 3.3));
+    PathPlannerTrajectory MiddleBottomReturn = PathPlanner.loadPath("Middle-Bottom-Return", new PathConstraints(1.5, 3.3));
+    PathPlannerTrajectory MiddleTopReturn = PathPlanner.loadPath("Middle-Top-Return", new PathConstraints(1.5, 3.3));
+    PathPlannerTrajectory MiddleTop = PathPlanner.loadPath("Middle-Top", new PathConstraints(1.5, 3.3));
+    PathPlannerTrajectory TopOut = PathPlanner.loadPath("Top-Out", new PathConstraints(1.5, 3.3));
+    PathPlannerTrajectory TopStation = PathPlanner.loadPath("Top-Station", new PathConstraints(1.5, 3.3));
+    PathPlannerTrajectory TopOutWait = PathPlanner.loadPath("Top-Out-Wait", new PathConstraints(1.5, 3.3));
+
+    ArrayList<PathPlannerTrajectory> pathOne = (ArrayList<PathPlannerTrajectory>) PathPlanner.loadPathGroup("New Path", new PathConstraints(1.5, 3.3));
+    ArrayList<PathPlannerTrajectory> pathTwo = (ArrayList<PathPlannerTrajectory>) PathPlanner.loadPathGroup("New New Path", new PathConstraints(1.5, 3.3));
+
 
     //Auto selection
     private Command[] autoCommands = new Command[]{};
@@ -33,6 +60,41 @@ public class RobotContainer {
     private Command driveCommand = null;
 
     public RobotContainer() {
+        
+
+        Map<String, Command> eventMap = new HashMap<>();
+        eventMap.put("marker1", new PrintCommand("Passed marker 1"));
+        eventMap.put("intakeDown", new PrintCommand("Intake Down"));
+        eventMap.put("marker2", new PrintCommand("Passed marker 2"));
+        eventMap.put("marker3", new PrintCommand("Passed marker 4"));
+        eventMap.put("marker4", new PrintCommand("Passed marker 3"));
+
+        //Consumer<SwerveModuleState[]> stateConsumer = (SwerveModuleState[] states) -> {m_swerve.setModuleStates(states);};
+        SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(
+            m_swerve.getOdometry()::getPoseMeters,
+            m_swerve::resetPose,
+            m_swerve.getKinematics(),
+            new PIDConstants(0.0, 0.0, 0.0),
+            new PIDConstants(0.0, 0.0, 0.0),
+            /*new Consumer<SwerveModuleState[]>() {
+                @Override
+                public void accept(SwerveModuleState[] states) {
+                    m_swerve.setModuleStates(states);
+                }
+            }*///m_swerve::setModuleStates,
+            //stateConsumer,
+            m_swerve::setModuleStates,
+            eventMap,
+            true,
+            m_swerve
+        );
+
+        Command autoOne = autoBuilder.fullAuto(pathOne);
+        Command autoTwo = autoBuilder.fullAuto(pathTwo);
+
+        autoCommands[0] = autoOne;
+        autoCommands[1] = autoTwo;
+
         //Auto selection setup
         m_chooser.setDefaultOption(this.autoCommands[0].getName(), this.autoCommands[0]);
         for(int i = 1; i < this.autoCommands.length; i++) {
