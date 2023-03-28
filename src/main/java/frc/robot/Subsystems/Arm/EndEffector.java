@@ -15,8 +15,9 @@ import com.revrobotics.CANSparkMaxLowLevel;
 public class EndEffector extends SubsystemBase {
   //Components
   private final Solenoid m_coneFlipSolenoid = new Solenoid(33, PneumaticsModuleType.CTREPCM, 1);
-  private final CANSparkMax m_intakemotor = new CANSparkMax(61, CANSparkMaxLowLevel.MotorType.kBrushless); //!FILLER VALUE!
-  private final CANSparkMax m_wristmotor = new CANSparkMax(62, CANSparkMaxLowLevel.MotorType.kBrushless); //!FILLER VALUE!
+  private final CANSparkMax m_intakemotor = new CANSparkMax(37, CANSparkMaxLowLevel.MotorType.kBrushless); 
+  private final CANSparkMax m_wristmotor = new CANSparkMax(26, CANSparkMaxLowLevel.MotorType.kBrushless);
+private final CANSparkMax m_wristmotor2 = new CANSparkMax(27, CANSparkMaxLowLevel.MotorType.kBrushless); //FILLER VALUE
   private final CANCoder m_cCoder = new CANCoder(0);
 
   //Target
@@ -78,27 +79,29 @@ public class EndEffector extends SubsystemBase {
   public void intakeControl(boolean state) {
     switch(this.m_mode) {
       case CUBE:
-        this.m_intakemotor.set(state ? 0.2 : 0);
+        this.setIntakeSpeed(state ? 0.2 : 0);
         break;
       case UPRIGHT_CONE:
-        this.m_intakemotor.set(state ? -0.4 : 0);
+        this.setIntakeSpeed(state ? -0.4 : 0);
         break;
       case TIPPED_CONE:
-        this.m_coneFlipSolenoid.set(!state);
-        this.m_intakemotor.set(state ? -0.6 : 0);
+        this.setSolenoid(!state);
+        this.setIntakeSpeed(state ? -0.6 : 0);
     }
   }
+
+  //Can we make all of these self calls so its easier to change? Ie instead of m_intakemotor.set, we use setIntakeSpeed?
   public void expelControl(boolean state) {
     switch(this.m_mode) {
       case CUBE:
-        this.m_intakemotor.set(state ? -0.2 : 0);
+        this.setIntakeSpeed(state ? -0.2 : 0);;
         break;
       case UPRIGHT_CONE:
-        this.m_intakemotor.set(state ? 0.4 : 0);
+        this.setIntakeSpeed(state ? 0.4 : 0);
         break;
       case TIPPED_CONE:
-        this.m_coneFlipSolenoid.set(state);
-        this.m_intakemotor.set(state ? 0.6 : 0);
+        this.setSolenoid(state);
+        this.setIntakeSpeed(state ? 0.6 : 0);
     }
   }
 
@@ -114,15 +117,15 @@ public class EndEffector extends SubsystemBase {
   public void periodic(){
     if(this.m_targetHoming) {
       double angleDifference = this.getCurrentAngle() - m_targetAngle;
-      double motorpower = angleDifference * kP / (MAX_ANGLE-MIN_ANGLE);
+      double motorpower = kP * Math.cos(angleDifference / (MAX_ANGLE-MIN_ANGLE));
       
-      this.m_wristmotor.set(motorpower);
+      this.setArmSpeed(motorpower);
     }
   }
-
   @Deprecated
   public void setArmSpeed(double speed) {
     this.m_wristmotor.set(speed);
+    this.m_wristmotor2.set(speed);
   }
   @Deprecated
   public void setIntakeSpeed(double speed) {
