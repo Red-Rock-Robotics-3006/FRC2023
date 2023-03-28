@@ -1,9 +1,9 @@
 package frc.robot.Subsystems.Arm;
 
+import com.ctre.phoenix.sensors.CANCoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 
-import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -12,7 +12,7 @@ import frc.robot.Subsystems.PowerDistributionModule;
 public class HorizontalExtender extends SubsystemBase {
   public static final double MIN_EXTENSION = 0.1; //Min height in meters from the robot center !FILLER VALUE!
   public static final double MAX_EXTENSION = 1.3; //Max height in meters from the robot center !FILLER VALUE!
-  private static final double encoderUnitsPerRot = 1; //Number of encoder units per rotation !FILLER VALUE!
+  private static final double encoderUnitsPerRot = 360; //Number of encoder units per rotation !FILLER VALUE!
   private static final double rotationsPerMeter = 5; //Motor rotations per meter of travel !FILLER VALUE!
   private static final double kP = 0.1; //Proportional control for extension movement !FILLER VALUE!
 
@@ -21,7 +21,7 @@ public class HorizontalExtender extends SubsystemBase {
   private boolean m_targetHoming = false; //Controls whether the mechanisms automatically seeks out targets
 
   private CANSparkMax m_motor = new CANSparkMax(49, CANSparkMaxLowLevel.MotorType.kBrushed); //Confirm Brushed!-!
-  private Encoder m_encoder = new Encoder(0, 1); //!FILLER VALUE!
+  private CANCoder m_encoder = new CANCoder(35); //!FILLER VALUE!
 
   public HorizontalExtender() {
     //Basic Setup
@@ -48,7 +48,7 @@ public class HorizontalExtender extends SubsystemBase {
   /** Meter position of elevator off of ground */
   public double getPos() {
     //https://www.chiefdelphi.com/t/help-using-neo-motor-encoders/405181/8
-    return MIN_EXTENSION + this.m_encoder.getDistance()/encoderUnitsPerRot/rotationsPerMeter;
+    return MIN_EXTENSION + this.m_encoder.getPosition()/encoderUnitsPerRot/rotationsPerMeter;
   }
 
   //Target Homing
@@ -103,7 +103,7 @@ public class HorizontalExtender extends SubsystemBase {
     @Override
     public void end(boolean interrupted) {
       HorizontalExtender.this.m_motor.set(0);
-      HorizontalExtender.this.m_encoder.reset();
+      HorizontalExtender.this.m_encoder.setPosition(HorizontalExtender.MIN_EXTENSION);
       HorizontalExtender.this.enableHoming();
     }
   }
