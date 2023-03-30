@@ -51,6 +51,8 @@ public class RobotContainer {
 
     ArrayList<PathPlannerTrajectory> pathOne = (ArrayList<PathPlannerTrajectory>) PathPlanner.loadPathGroup("New Path", new PathConstraints(1.5, 3.3));
     ArrayList<PathPlannerTrajectory> pathTwo = (ArrayList<PathPlannerTrajectory>) PathPlanner.loadPathGroup("New New Path", new PathConstraints(1.5, 3.3));
+    ArrayList<PathPlannerTrajectory> TopAuto = (ArrayList<PathPlannerTrajectory>) PathPlanner.loadPathGroup("Top-Out-Event", new PathConstraints(1.5, 3.3));
+    ArrayList<PathPlannerTrajectory> BottomAuto = (ArrayList<PathPlannerTrajectory>) PathPlanner.loadPathGroup("Bottom-Out-Event", new PathConstraints(1.5, 3.3));
 
 
     //Auto selection
@@ -68,6 +70,13 @@ public class RobotContainer {
         eventMap.put("marker2", new PrintCommand("Passed marker 2"));
         eventMap.put("marker3", new PrintCommand("Passed marker 4"));
         eventMap.put("marker4", new PrintCommand("Passed marker 3"));
+
+        // Replace PrintCommand with scoring command
+        eventMap.put("Score", new PrintCommand("REPLACE THIS COMMAND WITH THE COMMAND TO SCORE"));
+
+        // Replace with wait
+        // Hopefully this won't be necessary, so ignore for now
+        eventMap.put("Wait5s", new PrintCommand("REPLACE THIS WITH WHATEVER WILL MAKE THE ROBOT WAIT FOR 5 SECONDS"));
 
         //Consumer<SwerveModuleState[]> stateConsumer = (SwerveModuleState[] states) -> {m_swerve.setModuleStates(states);};
         SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(
@@ -89,11 +98,17 @@ public class RobotContainer {
             m_swerve
         );
 
-        Command autoOne = autoBuilder.fullAuto(pathOne);
-        Command autoTwo = autoBuilder.fullAuto(pathTwo);
+        //Command autoOne = autoBuilder.fullAuto(pathOne);
+        //Command autoTwo = autoBuilder.fullAuto(pathTwo);
+        Command TopAutoC = autoBuilder.fullAuto(TopAuto);
+        Command BottomAutoC = autoBuilder.fullAuto(BottomAuto);
 
-        autoCommands[0] = autoOne;
-        autoCommands[1] = autoTwo;
+        // ADD COMMAND IMPLEMENTATION OF SIMPLE AUTOS
+        // Sample command I think
+        //m_swerve.followTrajectoryCommand(BottomOut, true);
+
+        autoCommands[0] = TopAutoC;
+        autoCommands[1] = BottomAutoC;
 
         //Auto selection setup
         m_chooser.setDefaultOption(this.autoCommands[0].getName(), this.autoCommands[0]);
