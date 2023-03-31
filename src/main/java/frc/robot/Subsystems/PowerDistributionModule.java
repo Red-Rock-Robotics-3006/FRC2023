@@ -7,6 +7,7 @@ public class PowerDistributionModule {
 
   public static PowerDistribution getInstance() {
     if(instance==null) instance = new PowerDistribution();
+    instance.setSwitchableChannel(true);
     return instance;
   }
 }

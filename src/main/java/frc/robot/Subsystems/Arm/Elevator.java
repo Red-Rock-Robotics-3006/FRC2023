@@ -2,7 +2,7 @@ package frc.robot.Subsystems.Arm;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
-import com.revrobotics.SparkMaxAnalogSensor;
+import com.revrobotics.RelativeEncoder;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -21,7 +21,7 @@ public class Elevator extends SubsystemBase {
   //Components
   private CANSparkMax m_elevatorLeft = new CANSparkMax(57, CANSparkMaxLowLevel.MotorType.kBrushless);
   private CANSparkMax m_elevatorRight = new CANSparkMax(59, CANSparkMaxLowLevel.MotorType.kBrushless);
-  private SparkMaxAnalogSensor m_encoder = m_elevatorLeft.getAnalog(SparkMaxAnalogSensor.Mode.kRelative);
+  private RelativeEncoder m_encoder = m_elevatorLeft.getEncoder();
 
   public Elevator() {
     //Basic Setup
@@ -76,7 +76,7 @@ public class Elevator extends SubsystemBase {
     }
   }
 
-  @Deprecated
+  @Deprecated //Why is this deprecated
   public void setSpeed(double targetSpeed)
   {
     this.m_elevatorLeft.set(targetSpeed);

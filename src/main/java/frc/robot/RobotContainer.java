@@ -17,12 +17,13 @@ import frc.robot.Subsystems.*;
 import frc.robot.Subsystems.Arm.Elevator;
 import frc.robot.Subsystems.Arm.EndEffector;
 import frc.robot.Subsystems.Arm.HorizontalExtender;
+import frc.robot.Subsystems.Limelight.CAM_MODE;
 import frc.robot.Commands.*;
 
 @SuppressWarnings("unused")
 public class RobotContainer {
-  private final Joystick m_joystick1 = new Joystick(0);
-  private final CommandXboxController mechStick = new CommandXboxController(1);
+  private final Joystick m_joystick1 = new Joystick(1);
+  private final CommandXboxController mechStick = new CommandXboxController(0);
 
   private final Drivetrain m_swerve = Drivetrain.getInstance();
   private final Elevator m_elevator = new Elevator();
@@ -41,20 +42,22 @@ public class RobotContainer {
   private Command driveCommand = null;
 
   public RobotContainer() {
+    PowerDistributionModule.getInstance();
+
     // Post to SmartDashboard 
     // https://docs.wpilib.org/en/stable/docs/software/dashboards/
     //  smartdashboard/displaying-status-of-commands-and-subsystems.html
-    SmartDashboard.putData(CommandScheduler.getInstance());
-    SmartDashboard.putData(m_swerve);
-    SmartDashboard.putData(m_elevator);
-    SmartDashboard.putData(m_extender);
+    //SmartDashboard.putData(CommandScheduler.getInstance());
+    //SmartDashboard.putData(m_swerve);
+    //SmartDashboard.putData(m_elevator);
+    //SmartDashboard.putData(m_extender);
 
     // Auto selection setup
     if(this.autoCommands.length != 0) m_chooser.setDefaultOption(this.autoCommands[0].getName(), this.autoCommands[0]);
     for(int i = 1; i < this.autoCommands.length; i++) {
       m_chooser.addOption(this.autoCommands[i].getName(), this.autoCommands[i]);
     }
-    SmartDashboard.putData("Auto choices", m_chooser);
+    //SmartDashboard.putData("Auto choices", m_chooser);
 
     configureButtonBindings();
   }
@@ -74,7 +77,7 @@ public class RobotContainer {
     mechStick.b()
       .onTrue(new InstantCommand(() -> {m_extender.setSpeed(-0.2);}))
       .onFalse(new InstantCommand(() -> {m_extender.setSpeed(0.0);}));
-      mechStick.leftBumper()
+    mechStick.leftBumper()
         .onTrue(new InstantCommand(() -> {m_effector.setSolenoid(true);}))
         .onFalse(new InstantCommand(() -> {m_effector.setSolenoid(false);}));
     mechStick.povRight()
@@ -84,11 +87,11 @@ public class RobotContainer {
         .onTrue(new InstantCommand(() -> {m_effector.setIntakeSpeed(-0.8);}))
         .onFalse(new InstantCommand(() -> {m_effector.setIntakeSpeed(0);}));
     mechStick.povUp()
-        .onTrue(new InstantCommand(() -> {m_effector.setArmSpeed(1);}))
-        .onFalse(new InstantCommand(() -> {m_effector.setArmSpeed(0);}));
+        .onTrue(new InstantCommand(() -> {m_effector.setVelocityDelta(0.5);;}))
+        .onFalse(new InstantCommand(() -> {m_effector.setVelocityDelta(0);;}));
     mechStick.povDown()
-        .onTrue(new InstantCommand(() -> {m_effector.setArmSpeed(-1);}))
-        .onFalse(new InstantCommand(() -> {m_effector.setArmSpeed(0);}));
+        .onTrue(new InstantCommand(() -> {m_effector.setVelocityDelta(-0.4);;}))
+        .onFalse(new InstantCommand(() -> {m_effector.setVelocityDelta(0);;}));
   }
   
   public void enableControllers() {
@@ -130,5 +133,13 @@ public class RobotContainer {
 
   public Command getAutonomousCommand() {
     return this.m_chooser.getSelected();
+  }
+
+  public void confirmMechanismsResting() {
+    this.m_effector.setPosToStorred();
+  }
+
+  public void enableArmHoming() {
+    this.m_effector.enableHoming();
   }
 }
