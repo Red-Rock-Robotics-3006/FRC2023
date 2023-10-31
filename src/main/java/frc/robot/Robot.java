@@ -4,10 +4,13 @@
 
 package frc.robot;
 
+import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.Subsystems.Gyroscope;
 import frc.robot.Subsystems.Limelight;
 import frc.robot.Subsystems.Limelight.CAM_MODE;
+import frc.robot.Subsystems.Limelight.PIPELINE;
 
 public class Robot extends TimedRobot {
   private final RobotContainer m_robotContainer = new RobotContainer();
@@ -20,7 +23,11 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     // Flush NetworkTables every loop. This ensures that robot pose and other values
     // are sent during every loop iteration.
+    for(int port = 5800; port <= 5805; port++)
+      PortForwarder.add(port, "limelight.local", port); 
     setNetworkTablesFlushEnabled(true); 
+    Limelight.getInstance().setCamMode(CAM_MODE.PROCESSING);
+    Limelight.getInstance().setPipeline(PIPELINE.RANDOM);
   }
 
   @Override
@@ -30,6 +37,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
+    CommandScheduler.getInstance().cancelAll();
     m_robotContainer.getAutonomousCommand().schedule();
   }
 
@@ -42,7 +50,15 @@ public class Robot extends TimedRobot {
     m_robotContainer.enableControllers();
     m_robotContainer.confirmMechanismsResting();
     m_robotContainer.enableArmHoming();
-    Limelight.getInstance().setCamMode(CAM_MODE.RAW);
+    //Limelight.getInstance().setCamMode(CAM_MODE.RAW);
+
+    Limelight.getInstance().setCamMode(CAM_MODE.PROCESSING);
+    Limelight.getInstance().setPipeline(PIPELINE.RANDOM);
+  }
+
+  @Override
+  public void teleopPeriodic() {
+    System.out.println(Gyroscope.getPigeonInstance().getYaw());
   }
 
   @Override

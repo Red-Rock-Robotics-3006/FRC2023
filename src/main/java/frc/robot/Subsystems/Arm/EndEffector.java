@@ -129,11 +129,11 @@ public class EndEffector extends SubsystemBase {
   @Override
   public void periodic(){
     //SmartDashboard.putNumber("Raw Encoder", this.m_encoder.getPosition());
-    System.out.println("1: " + this.m_encoder.getPosition() + " 2: " + this.m_wristmotor2.getEncoder().getPosition());
+    //System.out.println("1: " + this.m_encoder.getPosition() + " 2: " + this.m_wristmotor2.getEncoder().getPosition());
 
     if(this.m_targetHoming) {
       double angleDifference = this.getCurrentAngle() - m_targetAngle;
-      double motorpower = (0.2*Math.cos(2*Math.PI*getCurrentAngle()/360));//(0.75*Math.pow(Math.cos(2*Math.PI*getCurrentAngle()/360),2) + 0.25) * m_pid.calculate(getCurrentAngle(), this.m_targetAngle);//-Math.pow(Math.cos(2*Math.PI*getCurrentAngle()/360),2) * kP * (angleDifference/360 - m_encoder.getVelocity());
+      double motorpower = (0.17*Math.cos(2*Math.PI*getCurrentAngle()/360));//(0.75*Math.pow(Math.cos(2*Math.PI*getCurrentAngle()/360),2) + 0.25) * m_pid.calculate(getCurrentAngle(), this.m_targetAngle);//-Math.pow(Math.cos(2*Math.PI*getCurrentAngle()/360),2) * kP * (angleDifference/360 - m_encoder.getVelocity());
       
       this.setArmSpeed(motorpower + velocityDelta);
     }
@@ -157,5 +157,13 @@ public class EndEffector extends SubsystemBase {
   @Deprecated
   public void setSolenoid(boolean state) {
     this.m_coneFlipSolenoid.set(state);
+  }
+  @Deprecated
+  public void m1test() {
+    this.m_wristmotor.set(-0.5);
+  }
+  @Deprecated
+  public void m2test() {
+    this.m_wristmotor2.set(-0.5);
   }
 }

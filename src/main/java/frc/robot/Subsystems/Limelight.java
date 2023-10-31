@@ -134,7 +134,8 @@ public class Limelight {
     APRILTAGS(0),
     RETROREFLECTIVE(1),
     GAMEPIECE_BOXES(2),
-    TIPPED_CONE_BOXES(3);
+    TIPPED_CONE_BOXES(3),
+    RANDOM(6);
 
     private final int val;
     private PIPELINE(int i) { this.val = i; }

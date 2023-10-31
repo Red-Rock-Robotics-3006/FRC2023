@@ -7,11 +7,11 @@ import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Elevator extends SubsystemBase {
-  public static final double MIN_HEIGHT = 0.1; //Min height in meters from the ground !FILLER VALUE!
-  public static final double MAX_HEIGHT = 1.3; //Max height in meters from the ground !FILLER VALUE!
+  public static final double MIN_HEIGHT = 0.28; //Min height in meters from the ground !FILLER VALUE!
+  public static final double MAX_HEIGHT = 1.24; //Max height in meters from the ground !FILLER VALUE!
   private static final double encoderUnitsPerRot = 1; //Number of encoder units per rotation !FILLER VALUE!
-  private static final double rotationsPerMeter = 5; //Motor rotations per meter of travel !FILLER VALUE!
-  private static final double kP = 0.1; //Proportional control for height movement !FILLER VALUE!
+  private static final double rotationsPerMeter = 46.405; //Motor rotations per meter of travel !FILLER VALUE!
+  private static final double kP = -0.25; //Proportional control for height movement !FILLER VALUE!
 
   //Target
   private double targetPos = 0.5; //Target height in meters from the ground !FILLER VALUE!
@@ -69,11 +69,16 @@ public class Elevator extends SubsystemBase {
         System.out.println("Elevator range met. Setting Velocity to 0.");
       }
       
-      double motorPower = kP * Math.cbrt((this.targetPos - getPos()) / (MAX_HEIGHT-MIN_HEIGHT));
+      System.out.println((this.targetPos - getPos()) / (MAX_HEIGHT-MIN_HEIGHT));
+      double motorPower = -kP * ((this.targetPos - getPos()) / (MAX_HEIGHT-MIN_HEIGHT));
         //Dividing error scales to -1 to 1
       this.m_elevatorLeft.set(motorPower);
       this.m_elevatorRight.set(motorPower);
     }
+  }
+
+  public void resetEncoder() {
+    this.m_encoder.setPosition(0);
   }
 
   @Deprecated //Why is this deprecated
@@ -81,5 +86,9 @@ public class Elevator extends SubsystemBase {
   {
     this.m_elevatorLeft.set(targetSpeed);
     this.m_elevatorRight.set(targetSpeed);
+  }
+  @Deprecated
+  public double getEncoderPos() {
+    return this.m_encoder.getPosition();
   }
 }
